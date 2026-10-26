@@ -58,17 +58,17 @@
       const lineBlur = (target, t) => tl.fromTo(target, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power3.out" }, t);
 
       exitAt("#cap-hook", 3.85);           // hook is on screen from frame 0 (the thumbnail)
-      wordsBlur("#cap-digest", 4.3, 6.8);
+      wordsBlur("#cap-digest", 4.3, 7.0);
       exitAt("#cap-digest", 9.2);
-      wordsInk("#cap-lie", 9.6, 12.0);
+      wordsInk("#cap-lie", 10.05, 11.0);
       exitAt("#cap-lie", 13.45);
-      lineBlur(q("#cap-valve .ln")[0], 13.7);
-      lineBlur(q("#cap-valve .ln")[1], 15.6);
-      exitAt("#cap-valve", 17.9);
-      wordsBlur("#cap-burn", 18.3, 20.3);
+      lineBlur(q("#cap-valve .ln")[0], 14.55);
+      lineBlur(q("#cap-valve .ln")[1], 16.25);
+      exitAt("#cap-valve", 18.0);
+      wordsBlur("#cap-burn", 18.95, 20.6);
       exitAt("#cap-burn", 22.0);
       lineBlur("#cap-fix-1", 22.3);
-      lineBlur("#cap-fix-2", 24.5);
+      lineBlur("#cap-fix-2", 24.3);
       lineBlur("#cap-note .ln", 26.9);
       window.__timelines["lines"] = tl;
     })();
