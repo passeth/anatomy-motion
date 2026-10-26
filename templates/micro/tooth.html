@@ -1,0 +1,158 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #f3d9cf; }
+    #tooth-wrap { position: absolute; inset: 0; }
+    #tooth-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #tooth-svg .lab .txt { font-family: "KRSans", sans-serif; font-weight: 800; fill: #111111; }
+    #tooth-svg .lab .box { fill: #ffffff; }
+    #tooth-svg .lab .lead { fill: none; stroke: #ffffff; stroke-width: 4; stroke-linecap: round; }
+    #tooth-svg .lab .dot { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+  </style>
+  <div id="root" data-composition-id="tooth" data-width="1080" data-height="1920">
+    <div id="tooth-wrap">
+      <svg id="tooth-svg" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+        <defs>
+          <linearGradient id="tooth-enamel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#eef1f2" /></linearGradient>
+          <linearGradient id="tooth-dentin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e7c4" /><stop offset="1" stop-color="#e8d2a2" /></linearGradient>
+          <radialGradient id="tooth-pulp" cx="0.5" cy="0.3" r="0.8"><stop offset="0" stop-color="#f6a3a6" /><stop offset="1" stop-color="#d9666f" /></radialGradient>
+          <pattern id="tooth-bone" width="64" height="64" patternUnits="userSpaceOnUse">
+            <rect width="64" height="64" fill="#ecdcbc" />
+            <circle cx="14" cy="16" r="9" fill="#dcc79e" /><circle cx="44" cy="10" r="6" fill="#dcc79e" /><circle cx="36" cy="40" r="11" fill="#dcc79e" /><circle cx="8" cy="50" r="5" fill="#dcc79e" /><circle cx="58" cy="54" r="7" fill="#dcc79e" />
+          </pattern>
+        </defs>
+        <g id="tooth-cam">
+          <rect x="-1000" y="1130" width="3080" height="2000" fill="url(#tooth-bone)" />
+          <path id="tooth-gum" fill="#e58b92" />
+          <g id="tooth-upper"><path id="tooth-up-enamel" fill="url(#tooth-enamel)" stroke="#d9dde0" stroke-width="3" /><path id="tooth-up-dentin" fill="url(#tooth-dentin)" /></g>
+          <path id="tooth-roots" fill="url(#tooth-dentin)" stroke="#d8c08e" stroke-width="3" />
+          <path id="tooth-enamel-low" fill="url(#tooth-enamel)" stroke="#d9dde0" stroke-width="3" />
+          <path id="tooth-dentin-low" fill="url(#tooth-dentin)" />
+          <path id="tooth-tubules" fill="none" stroke="#c9ab6c" stroke-width="3" stroke-linecap="round" opacity="0" />
+          <path id="tooth-pulp-shape" fill="url(#tooth-pulp)" />
+          <path id="tooth-vessel" fill="none" stroke="#c81f2c" stroke-width="7" stroke-linecap="round" />
+          <path id="tooth-nerve" fill="none" stroke="#f2c230" stroke-width="9" stroke-linecap="round" />
+          <path id="tooth-signal" fill="none" stroke="#fff27a" stroke-width="13" stroke-linecap="round" pathLength="1" stroke-dasharray="0.08 0.92" opacity="0" />
+          <path id="tooth-cracks" fill="none" stroke="#5b4b3c" stroke-width="4" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1.2" stroke-dashoffset="1.1" />
+          <path id="tooth-wear" fill="none" stroke="#c8ced2" stroke-width="5" stroke-linecap="round" opacity="0" />
+        </g>
+        <g id="tooth-lab-enamel" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">법랑질</text></g>
+        <g id="tooth-lab-dentin" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">드러난 상아질</text></g>
+        <g id="tooth-lab-nerve" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">신경</text></g>
+      </svg>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // ---- CONFIG: scene-local seconds (0 = when this scene starts in the film) ----
+      const DURATION = 4.4;
+      const GRIND = [[0, 0], [0.3, 0], [0.5, 1], [3.2, 1], [3.5, 0]];            // side-to-side grinding of the upper tooth
+      const WEAR = [[0, 0], [0.6, 0], [2.5, 1, "power1.inOut"]];               // cusps flatten, enamel thins
+      const CRACKS = [[0, 0], [1.6, 0], [2.4, 1, "power1.inOut"]];             // fine enamel cracks draw in
+      const SENSE = [[0, 0], [2.4, 0], [2.7, 1], [DURATION, 1]];               // signal pulses run down the nerve
+      const CAMS = [[0, 1.35], [0.6, 1, "expo.out"], [DURATION - 0.6, 1], [DURATION, 1.12, "power2.in"]];
+      const LABS = {
+        "tooth-lab-enamel": [[0, 0], [0.6, 0], [0.85, 1], [2.2, 1], [2.4, 0]],
+        "tooth-lab-dentin": [[0, 0], [2.4, 0], [2.65, 1], [4.1, 1], [4.3, 0]],
+        "tooth-lab-nerve": [[0, 0], [2.9, 0], [3.15, 1], [4.1, 1], [4.3, 0]],
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const r1 = (v) => Math.round(v * 10) / 10;
+      const EZ = {};
+      const ez = (n) => EZ[n] || (EZ[n] = gsap.parseEase(n));
+      const trk = (t, keys) => AnatomyMotion.track(t, keys);
+      const lerp = (a, b, u) => a + (b - a) * u;
+      const P = (pts) => "M" + pts.map((p) => r1(p[0]) + "," + r1(p[1])).join("L") + "Z";
+      function smoothPath(pts, closed) {
+        const n = pts.length, g = (i) => (closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))]);
+        let d = "M" + r1(pts[0][0]) + "," + r1(pts[0][1]);
+        for (let i = 0; i < (closed ? n : n - 1); i++) {
+          const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+          d += "C" + r1(p1[0] + (p2[0] - p0[0]) / 6) + "," + r1(p1[1] + (p2[1] - p0[1]) / 6) + " " + r1(p2[0] - (p3[0] - p1[0]) / 6) + "," + r1(p2[1] - (p3[1] - p1[1]) / 6) + " " + r1(p2[0]) + "," + r1(p2[1]);
+        }
+        return d + (closed ? "Z" : "");
+      }
+      // lower molar crown outline; w = wear 0..1 flattens the cusps
+      const crown = (w, inset) => {
+        const c = 60 * (1 - w) - inset * 0.6, f = 10 * (1 - w);
+        return [[330 + inset, 1120], [300 + inset, 960], [312 + inset, 870 + inset * 0.4], [380, 846 - c + inset], [460, 852 + inset * 0.6 - f * 0.5],
+          [540, 860 - f + inset], [620, 852 + inset * 0.6 - f * 0.5], [700, 846 - c + inset], [768 - inset, 870 + inset * 0.4], [780 - inset, 960], [750 - inset, 1120]];
+      };
+
+      const labs = {};
+      function setupLabels() {
+        document.querySelectorAll("#tooth-svg .lab").forEach((g) => {
+          const tx = g.querySelector(".txt"), fs = parseFloat(tx.getAttribute("font-size"));
+          let w = 0; try { w = tx.getComputedTextLength(); } catch (e) { w = 0; }
+          labs[g.id] = { g, tx, fs, w: w || tx.textContent.length * fs * 0.9, lead: g.querySelector(".lead"), dot: g.querySelector(".dot"), box: g.querySelector(".box") };
+        });
+      }
+      function placeLabel(id, ax, ay, dx, dy, side, op) {
+        const L = labs[id];
+        L.g.setAttribute("opacity", Math.round(op * 100) / 100);
+        if (op <= 0.001) return;
+        const hgt = L.fs * 1.5, bw = L.w + 40, bx = side > 0 ? ax + dx : ax + dx - bw, by = ay + dy - hgt / 2;
+        L.box.setAttribute("x", r1(bx)); L.box.setAttribute("y", r1(by)); L.box.setAttribute("width", r1(bw)); L.box.setAttribute("height", r1(hgt));
+        L.tx.setAttribute("x", r1(bx + 20)); L.tx.setAttribute("y", r1(by + hgt / 2 + L.fs * 0.36));
+        L.lead.setAttribute("d", `M${r1(ax)},${r1(ay)} L${r1(side > 0 ? bx : bx + bw)},${r1(by + hgt / 2)}`);
+        L.dot.setAttribute("cx", r1(ax)); L.dot.setAttribute("cy", r1(ay));
+      }
+
+      function drawAt(t) {
+        const w = trk(t, WEAR), gr = trk(t, GRIND), cs = trk(t, CAMS);
+        // the scene sits 110 px low so the opposing tooth clears the caption band
+        $("tooth-cam").setAttribute("transform", `translate(540,1110) scale(${cs.toFixed(4)}) translate(-540,-1000)`);
+        // the upper molar slides side to side against the lower one (a pure function of t)
+        const dx = gr * 46 * Math.sin(t * 2 * Math.PI * 1.6);
+        // the upper molar is the lower one mirrored about a line that keeps its cusps on the lower cusps as both wear
+        const wu = w * 0.85, ym = (786 + 60 * w - 4 + 786 + 60 * wu) / 2;
+        const up = crown(wu, 0).map((p) => [p[0] + dx, 2 * ym - p[1]]);
+        const upIn = crown(wu, 34).map((p) => [p[0] + dx, 2 * ym - p[1]]);
+        $("tooth-up-enamel").setAttribute("d", smoothPath(up.concat([[700 + dx, 430], [380 + dx, 430]]), true));
+        $("tooth-up-dentin").setAttribute("d", smoothPath(upIn.concat([[680 + dx, 440], [400 + dx, 440]]), true));
+        $("tooth-enamel-low").setAttribute("d", smoothPath(crown(w, 0), true));
+        // enamel thins with wear: the dentin outline rises toward the surface
+        const enamelT = lerp(42, 8, w);
+        $("tooth-dentin-low").setAttribute("d", smoothPath(crown(w, enamelT), true));
+        $("tooth-roots").setAttribute("d", smoothPath([[350, 1100], [326, 1380], [372, 1690], [432, 1700], [470, 1400], [505, 1250], [575, 1250], [610, 1400], [648, 1700], [708, 1690], [754, 1380], [730, 1100]], true));
+        $("tooth-pulp-shape").setAttribute("d", smoothPath([[430, 1130], [425, 1010], [455, 975], [500, 1000], [540, 1010], [580, 1000], [625, 975], [655, 1010], [650, 1130], [618, 1240], [628, 1660], [612, 1662], [590, 1250], [540, 1215], [490, 1250], [468, 1662], [452, 1660], [462, 1240]], true));
+        const canal = (s) => smoothPath([[540 + s * 40, 1060], [540 + s * 75, 1240], [540 + s * 80, 1450], [540 + s * 80, 1655]], false);
+        $("tooth-nerve").setAttribute("d", canal(-1) + canal(1));
+        $("tooth-vessel").setAttribute("d", smoothPath([[540 - 52, 1080], [540 - 92, 1250], [540 - 94, 1650]], false) + smoothPath([[540 + 52, 1080], [540 + 92, 1250], [540 + 94, 1650]], false));
+        $("tooth-gum").setAttribute("d", P([[-1000, 1080], [300, 1070], [350, 1110], [355, 1200], [-1000, 1240]]) + P([[2080, 1080], [780, 1070], [728, 1110], [724, 1200], [2080, 1240]]));
+        // worn facets and exposed dentin tubules
+        $("tooth-wear").setAttribute("opacity", Math.round(Math.min(1, w * 1.4) * 100) / 100);
+        $("tooth-wear").setAttribute("d", `M360,${r1(846 - 60 * (1 - w) + 4)} L420,${r1(848 - 30 * (1 - w))} M660,${r1(848 - 30 * (1 - w))} L720,${r1(846 - 60 * (1 - w) + 4)}`);
+        let tub = "";
+        for (let i = 0; i < 9; i++) { const x = 390 + i * 38; tub += `M${x},${r1(872 + 12 * (1 - w))} L${x + 6},${r1(930 + 12 * (1 - w))}`; }
+        $("tooth-tubules").setAttribute("opacity", Math.round(Math.max(0, (w - 0.55) / 0.45) * 100) / 100);
+        $("tooth-tubules").setAttribute("d", tub);
+        $("tooth-cracks").setAttribute("d", "M455,860 L470,905 L462,940 M612,856 L600,900 L611,948 M540,868 L546,915");
+        $("tooth-cracks").setAttribute("stroke-dashoffset", Math.round((1 - trk(t, CRACKS)) * 1100) / 1000);
+        // a sensitivity signal runs from the pulp down both nerves, again and again
+        const sense = trk(t, SENSE);
+        $("tooth-signal").setAttribute("d", canal(-1) + canal(1));
+        $("tooth-signal").setAttribute("opacity", Math.round(sense * 100) / 100);
+        $("tooth-signal").setAttribute("stroke-dashoffset", (-((t * 0.9) % 1)).toFixed(3));
+        const sc = (x, y) => [540 + (x - 540) * cs, 1110 + (y - 1000) * cs];
+        let a = sc(330, 900); placeLabel("tooth-lab-enamel", a[0], a[1], -40, -230, -1, trk(t, LABS["tooth-lab-enamel"]));
+        a = sc(470, 890); placeLabel("tooth-lab-dentin", a[0], a[1], -40, -260, -1, trk(t, LABS["tooth-lab-dentin"]));
+        a = sc(620, 1300); placeLabel("tooth-lab-nerve", a[0], a[1], 120, -40, 1, trk(t, LABS["tooth-lab-nerve"]));
+      }
+
+      function build() {
+        setupLabels();
+        const proxy = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo(proxy, { t: 0 }, { t: DURATION, duration: DURATION, ease: "none", onUpdate: () => drawAt(proxy.t) }, 0);
+        tl.fromTo("#tooth-wrap", { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0);
+        tl.fromTo("#tooth-wrap", { filter: "blur(0px)" }, { filter: "blur(8px)", duration: 0.5, ease: "power2.in", immediateRender: false }, DURATION - 0.5);
+        drawAt(0);
+        window.__timelines["tooth"] = tl;
+      }
+      const ready = document.fonts && document.fonts.load ? document.fonts.load('800 40px "KRSans"').catch(() => null) : Promise.resolve();
+      ready.then(build);
+    })();
+  </script>
+</template>

@@ -1,0 +1,23 @@
+{
+  "voice": "",
+  "model": "eleven_multilingual_v2",
+  "speed": 1.05,
+  "note": "start = film second the clip begins.",
+  "lines": [
+    {
+      "id": "n1",
+      "start": 0.1,
+      "text": "목디스크가 생기면 팔까지 저린 이유가 있어요."
+    },
+    {
+      "id": "n2",
+      "start": 4.4,
+      "text": "튀어나온 디스크가 바로 옆 신경을 눌러요."
+    },
+    {
+      "id": "n3",
+      "start": 8.3,
+      "text": "그 신경이 가는 길을 따라 어깨와 팔, 손이 저려요."
+    }
+  ]
+}

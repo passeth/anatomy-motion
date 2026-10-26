@@ -1,0 +1,76 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    @font-face { font-family: "KRSans"; font-weight: 500; src: local("Pretendard Medium"), local("Pretendard-Medium"), local("AppleSDGothicNeo-Medium"), local("Apple SD Gothic Neo Medium"), local("NotoSansKR-Medium"), local("Noto Sans KR Medium"), local("Malgun Gothic"), local("MalgunGothic"); }
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "KRSans", sans-serif; }
+    #root .cap { position: absolute; left: 96px; top: 250px; width: 870px; }
+    #root .ln { display: block; margin-bottom: 14px; }
+    #root .bx { display: inline-block; background: #ffffff; color: #111111; font-weight: 800; font-size: 78px; line-height: 1.18; letter-spacing: -0.01em; padding: 12px 26px 14px; border-radius: 14px; }
+    #root .w { display: inline-block; }
+    #root .acc { color: #e0262f; }
+    #root .note { display: inline-block; background: #ffffff; color: #111111; font-weight: 500; font-size: 32px; line-height: 1.3; padding: 10px 20px; border-radius: 12px; }
+  </style>
+  <div id="root" data-composition-id="lines" data-width="1080" data-height="1920">
+    <div id="cap-hook" class="cap clip" data-start="0" data-duration="4.1" data-track-index="1">
+      <div class="ln"><span class="bx">이를 꽉 무는 습관</span></div>
+      <div class="ln"><span class="bx">턱이 아픈 <span class="acc">진짜 이유</span></span></div>
+    </div>
+    <div id="cap-muscle" class="cap clip" data-start="4.2" data-duration="4.95" data-track-index="2">
+      <div class="ln"><span class="bx"><span class="w">씹는</span> <span class="w">근육이</span></span></div>
+      <div class="ln"><span class="bx"><span class="w">쉬지</span> <span class="w">못하고</span> <span class="w">힘을</span> <span class="w">줘요</span></span></div>
+    </div>
+    <div id="cap-tmj" class="cap clip" data-start="9.3" data-duration="4.8" data-track-index="3">
+      <div class="ln"><span class="bx"><span class="w">턱관절에</span> <span class="w">무리가</span> <span class="w">가서</span></span></div>
+      <div class="ln"><span class="bx"><span class="w acc">관자놀이까지</span> <span class="w">아파요</span></span></div>
+    </div>
+    <div id="cap-wear" class="cap clip" data-start="14.3" data-duration="4.1" data-track-index="4">
+      <div class="ln"><span class="bx">이를 갈면</span></div>
+      <div class="ln"><span class="bx">치아가 닳고 시려요</span></div>
+    </div>
+    <div id="cap-rest" class="cap clip" data-start="18.8" data-duration="4.45" data-track-index="5">
+      <div class="ln" id="cap-rest-1"><span class="bx">입술은 다물고</span></div>
+      <div class="ln" id="cap-rest-2"><span class="bx">윗니·아랫니는 살짝 떼기</span></div>
+    </div>
+    <div id="cap-guard" class="cap clip" data-start="23.4" data-duration="4.6" data-track-index="6">
+      <div class="ln"><span class="bx"><span class="w">밤에</span> <span class="w">이를</span> <span class="w">간다면</span></span></div>
+      <div class="ln"><span class="bx"><span class="w">치과에서</span> <span class="w">보호장치</span> <span class="w">상담</span></span></div>
+    </div>
+    <div id="cap-note" class="cap clip" data-start="25.8" data-duration="2.2" data-track-index="7" style="top: 1210px">
+      <div class="ln"><span class="note">턱 통증이나 입 벌림 제한이 계속되면 치과 진료를 받아보세요</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const q = (sel) => Array.from(document.querySelectorAll(sel));
+      // film seconds; each entrance lands on the narration word it shows
+      const exitAt = (sel, t) => tl.fromTo(q(sel + " .ln"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.2, ease: "power2.in", stagger: 0.04, immediateRender: false }, t);
+      const wordsBlur = (sel, ...times) => q(sel + " .ln").filter((ln) => ln.querySelector(".w")).forEach((ln, i) => {
+        const t0 = times[i] !== undefined ? times[i] : times[0] + i * 0.32;
+        tl.fromTo(ln.querySelector(".bx"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, t0);
+        tl.fromTo(ln.querySelectorAll(".w"), { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: 0.067 }, t0 + 0.03);
+      });
+      const wordsInk = (sel, ...times) => q(sel + " .ln").filter((ln) => ln.querySelector(".w")).forEach((ln, i) => {
+        const t0 = times[i] !== undefined ? times[i] : times[0] + i * 0.3;
+        tl.fromTo(ln.querySelector(".bx"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, t0);
+        ln.querySelectorAll(".w").forEach((w, j) => tl.fromTo(w, { color: "#c4c4c4" }, { color: w.classList.contains("acc") ? "#e0262f" : "#111111", duration: 0.16, ease: "power1.out" }, t0 + 0.05 + j * 0.09));
+      });
+      const lineBlur = (target, t) => tl.fromTo(target, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power3.out" }, t);
+
+      exitAt("#cap-hook", 3.85);           // hook is on screen from frame 0 (the thumbnail)
+      wordsBlur("#cap-muscle", 4.2, 6.0);
+      exitAt("#cap-muscle", 8.9);
+      wordsInk("#cap-tmj", 9.3, 12.6);
+      exitAt("#cap-tmj", 13.85);
+      lineBlur(q("#cap-wear .ln")[0], 14.3);
+      lineBlur(q("#cap-wear .ln")[1], 15.3);
+      exitAt("#cap-wear", 18.15);
+      lineBlur("#cap-rest-1", 18.8);
+      lineBlur("#cap-rest-2", 20.0);
+      exitAt("#cap-rest", 23.0);
+      wordsBlur("#cap-guard", 23.4, 24.9);
+      lineBlur("#cap-note .ln", 25.8);
+      window.__timelines["lines"] = tl;
+    })();
+  </script>
+</template>

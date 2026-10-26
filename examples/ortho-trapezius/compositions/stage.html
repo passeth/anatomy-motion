@@ -1,0 +1,90 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #am-ground { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, #7bcb60 0%, #5aae48 55%, #3a8e33 100%); }
+    #am-canvas, #am-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #am-svg .lab .txt { font-family: "KRSans", sans-serif; font-weight: 800; fill: #111111; }
+    #am-svg .lab .box { fill: #ffffff; }
+    #am-svg .lab .lead { fill: none; stroke: #ffffff; stroke-width: 4; stroke-linecap: round; }
+    #am-svg .lab .dot { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+  </style>
+  <div id="root" data-composition-id="stage" data-width="1080" data-height="1920">
+    <div id="am-ground"></div>
+    <canvas id="am-canvas" width="1080" height="1920"></canvas>
+    <svg id="am-svg" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+      <!-- label text lives here so it can be edited; the story below places each one -->
+      <g id="lab-trap" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">승모근</text></g>
+      <g id="lab-knot" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">통증 유발점</text></g>
+      <g id="lab-temple" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">관자놀이</text></g>
+      <g id="lab-neck" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">목 뒤</text></g>
+      <g id="lab-pec" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="38">가슴 근육 짧아짐</text></g>
+      <g id="lab-upper" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="38">위 승모근 과로</text></g>
+      <g id="lab-lower" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="38">아래 승모근 약해짐</text></g>
+    </svg>
+  </div>
+  <script>
+    (function () {
+      // Film seconds. Every key lands on a narration word (see narration.json).
+      const HEAT = [[0, 0.4], [0.5, 0.4], [2.6, 1, "power1.inOut"], [4.55, 1], [5.0, 0.3], [6.0, 0.3], [6.2, 0.48], [6.6, 0.64], [7.0, 0.8], [7.45, 1], [30.0, 1], [32.0, 0, "power1.inOut"]];
+      const PAIN = [[0, 0], [22.45, 0], [23.0, 1, "power1.inOut"], [23.9, 1], [24.3, 0]];
+      const story = {
+        duration: 35.6,
+        arms: "phone",
+        show: { muscles: ["trapezius", "levatorScapulae", "pectoralisMinor"] },
+        skip: [[10.3, 19.8]], // the inside-the-muscle scene covers this stretch
+        tracks: {
+          tilt: [[0, 35], [4.55, 35], [5.0, 0], [6.0, 0], [6.2, 15], [6.45, 15], [6.6, 30], [6.85, 30], [7.0, 45], [7.25, 45], [7.45, 60], [19.85, 60], [19.9, 42, "none"], [28.95, 42], [29.7, 0]],
+          retract: [[0, 0], [29.2, 0], [29.9, 1]],
+          shoulderFwd: [[0, 0], [24.9, 0], [25.7, 1], [29.0, 1], [29.9, -0.3]],
+          phoneUp: [[0, 0], [31.2, 0], [32.2, 1]],
+        },
+        muscles: {
+          trapezius: { heat: HEAT, weak: [[0, 0], [26.6, 0], [27.2, 1, "power1.inOut"], [30.0, 1], [32.0, 0, "power1.inOut"]] },
+          pectoralisMinor: { heat: [[0, 0], [24.95, 0], [25.6, 1, "power1.inOut"], [30.0, 1], [32.0, 0, "power1.inOut"]] },
+        },
+        knots: [{ id: "tp", on: "trapezius", side: "both", u: 0.5, v: 0.2,
+          show: [[0, 0], [19.85, 0], [19.9, 1, "none"], [29.6, 1], [30.6, 0]],
+          throb: [[0, 0], [20.4, 0], [20.58, 1, "power2.out"], [20.85, 0, "power2.in"], [22.5, 0], [22.68, 1, "power2.out"], [22.95, 0, "power2.in"]] }],
+        paths: [{ id: "referral", points: ["knot:tpR", "neck:2:-4.5,0,-2.5", "neck:5:-4.6,0,-2.2", "head:-5.8,0.4,-2.4", "head:-7.0,5.2,-2.2", "head:-6.8,9.6,-0.4", "head:-6.4,10.4,3.2", "head:-5.8,9.4,5.4"],
+          draw: [[0, 0], [21.0, 0], [22.3, 1, "power1.inOut"]], opacity: [[0, 0], [20.9, 0], [21.0, 1, "none"], [23.9, 1], [24.3, 0]] }],
+        painZones: [
+          { anchor: "neckBackL", intensity: PAIN }, { anchor: "neckBackR", intensity: PAIN },
+          { anchor: "mastoidL", intensity: PAIN }, { anchor: "mastoidR", intensity: PAIN },
+          { anchor: "templeL", intensity: PAIN }, { anchor: "templeR", intensity: PAIN },
+        ],
+        // azimuth 0 = facing the person, -90 = their right side (face looks screen-right), -180 = behind
+        camera: [
+          { t: 0, az: -90, el: 3, dist: 200, target: "body:0,56,5" }, { t: 4.55, az: -90, el: 3, dist: 200, target: "body:0,56,5" },
+          { t: 5.3, az: -90, el: 3, dist: 150, target: "body:0,68,7" }, { t: 9.55, az: -90, el: 3, dist: 150, target: "body:0,68,7" },
+          { t: 10.2, az: "normal", el: "normal", dist: 12, target: "muscle:trapezius:R:0.55,0.3", fov: 26, ease: "power3.in" },
+          { t: 19.85, az: "normal", el: "normal", dist: 12, target: "muscle:trapezius:R:0.55,0.3", fov: 26 },
+          { t: 19.9, az: "normal", el: "normal", dist: 16, target: "knot:tpR", fov: 30, ease: "none" },
+          { t: 20.9, az: -148, el: 12, dist: 170, target: "body:0,60,-3", ease: "expo.out" },
+          { t: 23.95, az: -122, el: 10, dist: 165, target: "body:0,60,-2", ease: "power1.inOut" },
+          { t: 24.75, az: -38, el: 8, dist: 175, target: "body:0,57,3" },
+          { t: 26.3, az: -44, el: 8, dist: 175, target: "body:0,57,3", ease: "none" },
+          { t: 27.05, az: -165, el: 14, dist: 180, target: "body:0,52,-3" },
+          { t: 28.2, az: -160, el: 14, dist: 180, target: "body:0,52,-3", ease: "power1.inOut" },
+          { t: 28.95, az: -90, el: 3, dist: 185, target: "body:0,58,6" },
+          { t: 35.6, az: -84, el: 3, dist: 185, target: "body:0,58,6", ease: "none" },
+        ],
+        labels: [
+          { id: "lab-trap", anchor: "muscle:trapezius:R:0.55,0.3", dx: -170, dy: -160, side: -1, show: [[0, 0], [1.1, 0], [1.35, 1], [4.3, 1], [4.5, 0]] },
+          { id: "lab-knot", anchor: "knot:tpR", dx: -150, dy: 130, side: -1, show: [[0, 0], [20.4, 0], [20.65, 1], [23.75, 1], [23.95, 0]] },
+          { id: "lab-temple", anchor: "templeR", dx: 110, dy: -150, side: 1, show: [[0, 0], [21.6, 0], [21.85, 1], [23.75, 1], [23.95, 0]] },
+          { id: "lab-neck", anchor: "neckBackR", dx: -150, dy: -110, side: -1, show: [[0, 0], [22.55, 0], [22.8, 1], [23.75, 1], [23.95, 0]] },
+          { id: "lab-pec", anchor: "pecR", dx: -150, dy: 170, side: -1, show: [[0, 0], [24.95, 0], [25.2, 1], [26.15, 1], [26.3, 0]] },
+          { id: "lab-upper", anchor: "muscle:trapezius:R:0.5,0.25", dx: 130, dy: -150, side: 1, show: [[0, 0], [26.75, 0], [27.0, 1], [28.3, 1], [28.5, 0]] },
+          { id: "lab-lower", anchor: "muscle:trapezius:R:0.45,0.82", dx: 130, dy: 90, side: 1, show: [[0, 0], [26.85, 0], [27.1, 1], [28.3, 1], [28.5, 0]] },
+        ],
+        overlays: {
+          protractor: [[0, 0], [5.0, 0], [5.25, 1], [9.3, 1], [9.55, 0]],
+          load: { show: [[0, 0], [5.0, 0], [5.25, 1], [9.3, 1], [9.55, 0]], table: [[0, 5], [15, 12], [30, 18], [45, 22], [60, 27]] }, // Hansraj 2014, lb -> kg
+          arrows: [{ from: "head:0,-1.5,20", to: "head:0,-1.5,13.5", show: [[0, 0], [28.95, 0], [29.15, 1], [30.9, 1], [31.15, 0]] }], // chin tuck
+        },
+      };
+      AnatomyMotion.mount({ id: "stage", story });
+    })();
+  </script>
+</template>

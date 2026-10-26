@@ -1,0 +1,235 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #f2cfc6; }
+    #fiber-wrap { position: absolute; inset: 0; }
+    #fiber-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #fiber-svg .lab .txt { font-family: "KRSans", sans-serif; font-weight: 800; fill: #111111; }
+    #fiber-svg .lab .box { fill: #ffffff; }
+    #fiber-svg .lab .lead { fill: none; stroke: #ffffff; stroke-width: 4; stroke-linecap: round; }
+    #fiber-svg .lab .dot { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+  </style>
+  <div id="root" data-composition-id="fiber" data-width="1080" data-height="1920">
+    <div id="fiber-wrap">
+      <svg id="fiber-svg" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+        <defs>
+          <linearGradient id="fiber-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f29a94" />
+            <stop offset="0.45" stop-color="#d9545c" />
+            <stop offset="1" stop-color="#b13844" />
+          </linearGradient>
+          <radialGradient id="fiber-knot-grad" cx="0.42" cy="0.38" r="0.7">
+            <stop offset="0" stop-color="#c8303b" />
+            <stop offset="0.7" stop-color="#8f121d" />
+            <stop offset="1" stop-color="#6d0b14" />
+          </radialGradient>
+        </defs>
+        <rect x="-3000" y="-3000" width="7080" height="7920" fill="#f2cfc6" />
+        <g id="fiber-cam">
+          <g id="fiber-back"></g>
+          <path id="fiber-cap-wall" fill="#d9707a" />
+          <path id="fiber-cap-lumen" fill="#fbe3d6" />
+          <g id="fiber-rbc"></g>
+          <g id="fiber-front"></g>
+          <g id="fiber-knot" opacity="0">
+            <ellipse id="fiber-knot-core" cx="540" cy="960" rx="150" ry="110" fill="url(#fiber-knot-grad)" stroke="#5a0710" stroke-width="4" />
+            <path id="fiber-knot-folds" fill="none" stroke="#5a0710" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round" />
+          </g>
+        </g>
+        <g id="fiber-lab-cap" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">모세혈관</text></g>
+        <g id="fiber-lab-rbc" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">산소 나르는 적혈구</text></g>
+        <g id="fiber-lab-knot" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">뭉친 근섬유</text></g>
+      </svg>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const NS = "http://www.w3.org/2000/svg";
+      const $ = (id) => document.getElementById(id);
+      const D2R = Math.PI / 180;
+      const r1 = (v) => Math.round(v * 10) / 10;
+      const EZ = {};
+      const ez = (n) => EZ[n] || (EZ[n] = gsap.parseEase(n));
+      function trk(t, keys) {
+        if (t <= keys[0][0]) return keys[0][1];
+        for (let i = 1; i < keys.length; i++) {
+          const k = keys[i];
+          if (t < k[0]) {
+            const p = keys[i - 1];
+            const u = (t - p[0]) / (k[0] - p[0]);
+            return p[1] + (k[1] - p[1]) * ez(k[2] || "power2.inOut")(u);
+          }
+        }
+        return keys[keys.length - 1][1];
+      }
+      const set = (el, a) => { for (const k in a) el.setAttribute(k, a[k]); };
+      const mk = (tag, a, parent) => { const e = document.createElementNS(NS, tag); set(e, a || {}); parent.appendChild(e); return e; };
+
+      // ---- CONFIG: scene-local seconds (0 = when this scene starts in the film) ----
+      // contraction squeezes the capillary, SPEED slows the red cells (px/s), KNOT bunches the bundles into a trigger point
+      const CONTRACT = [[0, 0], [0.6, 0], [2.6, 1]];
+      const KNOT = [[0, 0], [5.7, 0], [7.4, 1]];
+      const SPEED = [[0, 420], [0.6, 420], [2.6, 60], [5.7, 60], [7.4, 14]];
+      const THROB = [[0, 0], [7.7, 0], [7.88, 1, "power2.out"], [8.1, 0, "power2.in"], [8.35, 0], [8.53, 1, "power2.out"], [8.75, 0, "power2.in"]];
+      const CAMS = [[0, 1.5], [0.7, 1, "expo.out"], [9.0, 1], [9.7, 0.55, "power2.in"]];
+      const LABS = {
+        "fiber-lab-cap": [[0, 0], [1.9, 0], [2.15, 1], [4.4, 1], [4.6, 0]],
+        "fiber-lab-rbc": [[0, 0], [3.0, 0], [3.25, 1], [4.4, 1], [4.6, 0]],
+        "fiber-lab-knot": [[0, 0], [7.7, 0], [7.95, 1], [8.9, 1], [9.05, 0]],
+      };
+      const ROT = -16, CX = 540, CY = 960;
+      const N = 12, PITCH = 186, H0 = 150;
+      const X0 = -760, X1 = 1840, STEP = 30;
+
+      const back = [], front = [];
+      for (let i = 0; i < N; i++) {
+        const g = mk("g", {}, i <= 5 ? $("fiber-back") : $("fiber-front"));
+        const body = mk("path", { fill: "url(#fiber-grad)", stroke: "#f7c2bb", "stroke-width": 3 }, g);
+        const stripes = mk("path", { fill: "none", stroke: "#7a1420", "stroke-opacity": 0.22, "stroke-width": 5 }, g);
+        const hi = mk("path", { fill: "none", stroke: "#ffd6d0", "stroke-opacity": 0.55, "stroke-width": 4, "stroke-linecap": "round" }, g);
+        (i <= 5 ? back : front).push({ i, body, stripes, hi });
+      }
+      const fas = [...back, ...front].sort((a, b) => a.i - b.i);
+      const rbcs = [];
+      for (let j = 0; j < 22; j++) {
+        const g = mk("g", {}, $("fiber-rbc"));
+        mk("ellipse", { rx: 22, ry: 13, fill: "#d8222f", stroke: "#9e1220", "stroke-width": 2 }, g);
+        mk("ellipse", { rx: 9, ry: 5, fill: "#ec5c63" }, g);
+        rbcs.push(g);
+      }
+
+      const gauss = (x, s) => Math.exp(-((x - CX) * (x - CX)) / (2 * s * s));
+      function fasGeom(i, c, k) {
+        const base = CY + (i - (N - 1) / 2) * PITCH;
+        const d = CY - base;
+        const pull = d * 0.55 * Math.exp(-(d / 600) * (d / 600)); // bundles near the knot bunch up, far ones barely move
+        const h = H0 * (1 + 0.15 * c);
+        const yc = (x) => base + k * pull * gauss(x, 230);
+        const hh = (x) => h * (1 + k * 0.5 * gauss(x, 200) * (Math.abs(base - CY) < 400 ? 1 : 0.4));
+        return { yc, hh, base };
+      }
+      function capY(x) { return CY + 8 * Math.sin((2 * Math.PI * x) / 700); }
+      function capW(x, c, k) { return Math.max(9, 46 - 22 * c - 30 * k * gauss(x, 170)); }
+      function posAt(t) {
+        // integrate the blood speed so the cells' positions are a function of time alone
+        let s = 0;
+        const dt = 1 / 120;
+        for (let τ = 0; τ < t; τ += dt) s += trk(τ, SPEED) * Math.min(dt, t - τ);
+        return s;
+      }
+      const toScreen = (p, s) => {
+        const a = ROT * D2R, dx = p.x - CX, dy = p.y - CY;
+        return { x: CX + s * (dx * Math.cos(a) - dy * Math.sin(a)), y: CY + s * (dx * Math.sin(a) + dy * Math.cos(a)) };
+      };
+      const labs = {};
+      function setupLabels() {
+        document.querySelectorAll("#fiber-svg .lab").forEach((g) => {
+          const tx = g.querySelector(".txt");
+          const fs = parseFloat(tx.getAttribute("font-size"));
+          let w = 0;
+          try { w = tx.getComputedTextLength(); } catch (e) { w = 0; }
+          if (!w) w = tx.textContent.length * fs * 0.85;
+          labs[g.id] = { g, tx, fs, w, lead: g.querySelector(".lead"), box: g.querySelector(".box") };
+        });
+      }
+      function placeLabel(id, sp, dx, dy, side, op) {
+        const L = labs[id];
+        if (!L) return;
+        L.g.setAttribute("opacity", Math.round(op * 100) / 100);
+        if (op <= 0.001) return;
+        L.g.setAttribute("transform", `translate(${r1(sp.x)},${r1(sp.y)})`);
+        const padX = 20, hgt = L.fs * 1.5, bw = L.w + padX * 2;
+        const bx = side > 0 ? dx : dx - bw;
+        set(L.box, { x: r1(bx), y: r1(dy - hgt / 2), width: r1(bw), height: r1(hgt) });
+        set(L.tx, { x: r1(bx + padX), y: r1(dy + L.fs * 0.36) });
+        L.lead.setAttribute("d", `M0,0 L${r1(dx)},${r1(dy)}`);
+      }
+
+      function drawAt(t) {
+        const c = trk(t, CONTRACT), k = trk(t, KNOT), cs = trk(t, CAMS);
+        $("fiber-cam").setAttribute("transform", `translate(${CX},${CY}) scale(${cs.toFixed(4)}) rotate(${ROT}) translate(${-CX},${-CY})`);
+        const sp = 18 * (1 - 0.2 * c);
+        fas.forEach((f) => {
+          const G = fasGeom(f.i, c, k);
+          let top = "", bot = "", hi = "";
+          const xs = [];
+          for (let x = X0; x <= X1; x += STEP) xs.push(x);
+          xs.forEach((x, n) => {
+            const y = G.yc(x), h = G.hh(x);
+            top += (n ? "L" : "M") + r1(x) + "," + r1(y - h / 2);
+            hi += (n ? "L" : "M") + r1(x) + "," + r1(y - h / 2 + 9);
+          });
+          for (let n = xs.length - 1; n >= 0; n--) {
+            const x = xs[n], y = G.yc(x), h = G.hh(x);
+            bot += "L" + r1(x) + "," + r1(y + h / 2);
+          }
+          f.body.setAttribute("d", top + bot + "Z");
+          f.hi.setAttribute("d", hi);
+          let st = "";
+          const j0 = Math.ceil((X0 - CX) / sp), j1 = Math.floor((X1 - CX) / sp);
+          for (let j = j0; j <= j1; j++) {
+            const x = CX + j * sp, y = G.yc(x), h = G.hh(x);
+            st += "M" + r1(x) + "," + r1(y - h / 2 + 4) + "L" + r1(x) + "," + r1(y + h / 2 - 4);
+          }
+          f.stripes.setAttribute("d", st);
+        });
+        // capillary between the two middle bundles
+        let wt = "", wb = "", lt = "", lb = "";
+        const xs = [];
+        for (let x = X0; x <= X1; x += STEP) xs.push(x);
+        xs.forEach((x, n) => {
+          const y = capY(x), w = capW(x, c, k);
+          wt += (n ? "L" : "M") + r1(x) + "," + r1(y - w / 2);
+          lt += (n ? "L" : "M") + r1(x) + "," + r1(y - w / 2 + 6);
+        });
+        for (let n = xs.length - 1; n >= 0; n--) {
+          const x = xs[n], y = capY(x), w = capW(x, c, k);
+          wb += "L" + r1(x) + "," + r1(y + w / 2);
+          lb += "L" + r1(x) + "," + r1(y + w / 2 - 6);
+        }
+        $("fiber-cap-wall").setAttribute("d", wt + wb + "Z");
+        $("fiber-cap-lumen").setAttribute("d", lt + lb + "Z");
+        const s = posAt(t);
+        rbcs.forEach((g, j) => {
+          const span = X1 - X0;
+          const x = X0 + ((((j * 118 + s) % span) + span) % span);
+          const lumen = capW(x, c, k) - 12;
+          const ry = Math.max(2.5, Math.min(13, lumen / 2 - 1));
+          const y = capY(x);
+          const slope = Math.atan((8 * 2 * Math.PI * Math.cos((2 * Math.PI * x) / 700)) / 700) / D2R;
+          g.setAttribute("transform", `translate(${r1(x)},${r1(y)}) rotate(${r1(slope)}) scale(1,${(ry / 13).toFixed(3)})`);
+        });
+        // the knot
+        const th = trk(t, THROB);
+        set($("fiber-knot"), { opacity: Math.round(Math.min(1, k * 1.6) * 100) / 100, transform: `translate(${CX},${CY}) scale(${(k * (1 + 0.1 * th)).toFixed(4)}) translate(${-CX},${-CY})` });
+        let folds = "";
+        [-60, -20, 20, 60].forEach((o, n) => {
+          folds += `M${CX - 110},${CY + o} C${CX - 40},${CY + o - 40 + n * 6} ${CX + 40},${CY + o + 40 - n * 6} ${CX + 110},${CY + o}`;
+        });
+        $("fiber-knot-folds").setAttribute("d", folds);
+        // labels in screen space
+        const capPt = toScreen({ x: 250, y: capY(250) }, cs);
+        placeLabel("fiber-lab-cap", capPt, -40, -190, -1, trk(t, LABS["fiber-lab-cap"]));
+        const rbcX = 760;
+        const rbcPt = toScreen({ x: rbcX, y: capY(rbcX) }, cs);
+        placeLabel("fiber-lab-rbc", rbcPt, 40, 210, -1, trk(t, LABS["fiber-lab-rbc"]));
+        const knPt = toScreen({ x: CX + 60, y: CY + 70 }, cs);
+        placeLabel("fiber-lab-knot", knPt, 60, 220, 1, trk(t, LABS["fiber-lab-knot"]));
+      }
+
+      function build() {
+        setupLabels();
+        const proxy = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo(proxy, { t: 0 }, { t: 9.7, duration: 9.7, ease: "none", onUpdate: () => drawAt(proxy.t) }, 0);
+        // the dive in arrives blurred and sharpens; the pull out blurs as it leaves
+        tl.fromTo("#fiber-wrap", { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 0);
+        tl.fromTo("#fiber-wrap", { filter: "blur(0px)" }, { filter: "blur(8px)", duration: 0.7, ease: "power2.in", immediateRender: false }, 9.0);
+        drawAt(0);
+        window.__timelines["fiber"] = tl;
+      }
+      const ready = document.fonts && document.fonts.load ? document.fonts.load('800 40px "KRSans"').catch(() => null) : Promise.resolve();
+      ready.then(build);
+    })();
+  </script>
+</template>

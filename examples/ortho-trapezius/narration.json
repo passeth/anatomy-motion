@@ -1,0 +1,15 @@
+{
+  "voice": "",
+  "model": "eleven_multilingual_v2",
+  "speed": 1.05,
+  "note": "Numbers are written in Hangul so TTS reads them as intended. start = film second the clip begins; every scene key was timed to these words.",
+  "lines": [
+    { "id": "v1", "start": 0.1, "text": "폰 볼 때마다 어깨가 뭉친다면, 이유는 승모근에 있어요." },
+    { "id": "v2", "start": 4.75, "text": "머리는 오 킬로지만, 육십 도 숙이면 약 이십칠 킬로가 돼요." },
+    { "id": "v3", "start": 10.45, "text": "긴장한 근육이 혈관을 누르면, 산소가 부족해져요." },
+    { "id": "v4", "start": 15.15, "text": "그러면 근섬유가 뭉쳐서, 단단한 매듭이 돼요." },
+    { "id": "v5", "start": 20.25, "text": "이 매듭은 관자놀이까지 통증을 보내요." },
+    { "id": "v6", "start": 24.3, "text": "어깨가 앞으로 말리면, 위 승모근만 혹사당해요." },
+    { "id": "v7", "start": 28.5, "text": "턱을 뒤로 당겨서 십 초씩 열 번, 화면은 눈높이로 올리세요." }
+  ]
+}

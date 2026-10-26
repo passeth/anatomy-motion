@@ -1,0 +1,73 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #am-ground { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, #7bcb60 0%, #5aae48 55%, #3a8e33 100%); }
+    #am-canvas, #am-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #am-svg .lab .txt { font-family: "KRSans", sans-serif; font-weight: 800; fill: #111111; }
+    #am-svg .lab .box { fill: #ffffff; }
+    #am-svg .lab .lead { fill: none; stroke: #ffffff; stroke-width: 4; stroke-linecap: round; }
+    #am-svg .lab .dot { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+  </style>
+  <div id="root" data-composition-id="stage" data-width="1080" data-height="1920">
+    <div id="am-ground"></div>
+    <canvas id="am-canvas" width="1080" height="1920"></canvas>
+    <svg id="am-svg" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+      <g id="lab-eso" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">식도</text></g>
+      <g id="lab-stomach" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">위</text></g>
+      <g id="lab-level" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">위와 식도가 같은 높이</text></g>
+      <g id="lab-burn" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">가슴 쓰림</text></g>
+      <g id="lab-raise" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="40">머리 쪽 15~20cm 높이기</text></g>
+    </svg>
+  </div>
+  <script>
+    (function () {
+      // Film seconds, timed to narration.json. bodyPitch -90 = lying on the back; -72 = head of the bed raised.
+      const ACID = [[0, 0], [18.3, 0], [19.8, 1, "power1.inOut"], [22.4, 1], [24.0, 0, "power1.inOut"]];
+      const story = {
+        duration: 29,
+        arms: "relaxed",
+        show: { organs: ["lungs", "heart", "airway", "esophagus", "stomach", "liver", "duodenum", "smallIntestine", "colon"] },
+        skip: [[13.75, 18.15]], // the sphincter close-up covers this stretch
+        tracks: {
+          bodyPitch: [[0, 0], [9.8, 0], [11.4, -90, "power2.inOut"], [22.4, -90], [24.0, 0, "power2.inOut"], [24.6, 0], [26.0, -68, "power2.inOut"]],
+          boneOpacity: 0.28,
+        },
+        organs: {
+          lungL: { opacity: 0.18 }, lungR: { opacity: 0.18 }, heart: { opacity: 0.32 }, trachea: { opacity: 0.45 }, bronchusL: { opacity: 0.45 }, bronchusR: { opacity: 0.45 },
+          liver: { opacity: 0.26 }, colon: { opacity: 0.55 }, smallIntestine: { opacity: 0.7 },
+          esophagus: { opacity: 0.75, heat: [[0, 0], [18.6, 0], [20.0, 1, "power1.inOut"], [22.4, 1], [24.0, 0, "power1.inOut"]] },
+          stomach: { opacity: 0.85, heat: [[0, 0], [6.8, 0], [8.4, 0.55, "power1.inOut"], [22.4, 0.55], [24.0, 0.15, "power1.inOut"]] },
+        },
+        bolus: [{ along: "upperGI", color: "#c98a52", scale: 1.3, u: [[0, 0], [1.0, 0], [6.4, 0.5, "power1.inOut"], [8.4, 0.6, "power2.out"]], show: [[0, 0], [0.8, 0], [1.0, 1], [8.0, 1], [9.0, 0.0]] }],
+        flows: [{ along: "esophagus", from: 1.0, to: 0.28, radius: 1.0, color: "#c9dc4c", progress: ACID, opacity: 1 }],
+        painZones: [
+          { anchor: "heartburn", radius: 5.5, intensity: [[0, 0], [19.0, 0], [20.0, 1, "power1.inOut"], [22.4, 1], [23.6, 0, "power1.inOut"]] },
+          { anchor: "epigastrium", radius: 4.5, intensity: [[0, 0], [19.3, 0], [20.2, 0.6], [22.4, 0.6], [23.6, 0]] },
+        ],
+        // lying down reads best from above the hips looking toward the head: the body runs up the tall frame
+        camera: [
+          { t: 0, az: -24, el: 6, dist: 138, target: "body:0,40,2" },
+          { t: 4.2, az: -26, el: 6, dist: 138, target: "body:0,40,2", ease: "none" },
+          { t: 9.4, az: -40, el: 8, dist: 132, target: "body:1,36,2", ease: "power1.inOut" },
+          { t: 11.6, az: -38, el: 46, dist: 150, target: "body:1,38,4" },
+          { t: 13.75, az: -36, el: 46, dist: 150, target: "body:1,38,4", ease: "none" },
+          { t: 18.15, az: -40, el: 44, dist: 128, target: "body:1.5,36,4", ease: "none" },
+          { t: 22.4, az: -42, el: 44, dist: 128, target: "body:1.5,36,4", ease: "none" },
+          { t: 24.0, az: -26, el: 6, dist: 140, target: "body:0,40,2" },
+          { t: 24.6, az: -28, el: 6, dist: 140, target: "body:0,40,2", ease: "none" },
+          { t: 26.0, az: -76, el: 14, dist: 178, target: "body:0,47,3" },
+          { t: 29, az: -72, el: 14, dist: 178, target: "body:0,47,3", ease: "none" },
+        ],
+        labels: [
+          { id: "lab-eso", anchor: "organ:esophagus:0.45", dx: -150, dy: -120, side: -1, show: [[0, 0], [4.6, 0], [4.85, 1], [9.2, 1], [9.4, 0]] },
+          { id: "lab-stomach", anchor: "organ:stomach", dx: 150, dy: 140, side: 1, show: [[0, 0], [6.2, 0], [6.45, 1], [9.2, 1], [9.4, 0]] },
+          { id: "lab-level", anchor: "les", dx: 60, dy: -230, side: 1, show: [[0, 0], [12.0, 0], [12.25, 1], [13.6, 1], [13.75, 0, "none"]] },
+          { id: "lab-burn", anchor: "heartburn", dx: 80, dy: -220, side: 1, show: [[0, 0], [19.6, 0], [19.85, 1], [22.2, 1], [22.4, 0]] },
+          { id: "lab-raise", anchor: "head:0,9,0", dx: 150, dy: 150, side: 1, show: [[0, 0], [25.8, 0], [26.05, 1], [28.7, 1], [28.9, 0]] },
+        ],
+      };
+      AnatomyMotion.mount({ id: "stage", story });
+    })();
+  </script>
+</template>

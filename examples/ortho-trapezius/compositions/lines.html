@@ -1,0 +1,123 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    @font-face { font-family: "KRSans"; font-weight: 500; src: local("Pretendard Medium"), local("Pretendard-Medium"), local("AppleSDGothicNeo-Medium"), local("Apple SD Gothic Neo Medium"), local("NotoSansKR-Medium"), local("Noto Sans KR Medium"), local("Malgun Gothic"), local("MalgunGothic"); }
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "KRSans", sans-serif; }
+    #root .cap { position: absolute; left: 96px; top: 250px; width: 870px; }
+    #root .ln { display: block; margin-bottom: 14px; }
+    #root .bx {
+      display: inline-block; background: #ffffff; color: #111111; font-weight: 800;
+      font-size: 78px; line-height: 1.18; letter-spacing: -0.01em; padding: 12px 26px 14px; border-radius: 14px;
+    }
+    #root .sm { font-size: 60px; }
+    #root .w { display: inline-block; }
+    #root .acc { color: #e0262f; }
+    #root .num { display: inline-flex; align-items: center; font-size: 180px; line-height: 1; padding: 18px 34px 22px; }
+    #root .num .unit { font-size: 120px; margin-left: 8px; }
+    #root .num .yak { font-size: 92px; margin-right: 18px; color: #111111; }
+    #root .strip-wrap { display: inline-block; height: 180px; overflow: hidden; color: #e0262f; text-align: right; }
+    #root .strip { display: block; }
+    #root .strip span { display: block; height: 180px; line-height: 180px; }
+    #root .note { display: inline-block; background: #ffffff; color: #111111; font-weight: 500; font-size: 32px; line-height: 1.3; padding: 10px 20px; border-radius: 12px; }
+  </style>
+  <div id="root" data-composition-id="lines" data-width="1080" data-height="1920">
+    <div id="cap-hook" class="cap clip" data-start="0" data-duration="4.55" data-track-index="1">
+      <div class="ln"><span class="bx">어깨가 늘 뭉치는</span></div>
+      <div class="ln"><span class="bx">진짜 이유</span></div>
+    </div>
+
+    <div id="cap-load" class="cap clip" data-start="4.65" data-duration="4.95" data-track-index="2">
+      <div class="ln"><span class="bx sm"><span class="w">고개를</span> <span class="w">숙일수록</span></span></div>
+      <div class="ln"><span class="bx sm"><span class="w">목이</span> <span class="w">버티는</span> <span class="w">무게</span></span></div>
+      <div class="ln" id="cap-load-num"><span class="bx num"><span class="yak" id="cap-yak">약</span><span class="strip-wrap" data-layout-allow-overflow><span class="strip" id="cap-strip"><span>5</span><span>12</span><span>18</span><span>22</span><span>27</span></span></span><span class="unit">kg</span></span></div>
+    </div>
+    <div id="cap-src" class="cap clip" data-start="6.2" data-duration="3.4" data-track-index="9" style="top: 1236px">
+      <div class="ln" id="cap-load-src"><span class="note">Hansraj(2014) 계산 모델 추정치</span></div>
+    </div>
+
+    <div id="cap-press" class="cap clip" data-start="10.45" data-duration="4.45" data-track-index="3">
+      <div class="ln"><span class="bx"><span class="w">계속</span> <span class="w">긴장한</span> <span class="w">근육이</span></span></div>
+      <div class="ln"><span class="bx"><span class="w">혈관을</span> <span class="w">눌러요</span></span></div>
+    </div>
+
+    <div id="cap-knot" class="cap clip" data-start="15.15" data-duration="4.1" data-track-index="4">
+      <div class="ln"><span class="bx">피가 덜 돌면</span></div>
+      <div class="ln"><span class="bx">근육이 단단하게 뭉쳐요</span></div>
+    </div>
+
+    <div id="cap-refer" class="cap clip" data-start="20.25" data-duration="3.75" data-track-index="5">
+      <div class="ln"><span class="bx"><span class="w">뭉친</span> <span class="w acc">승모근은</span></span></div>
+      <div class="ln"><span class="bx"><span class="w">관자놀이까지</span> <span class="w">아파요</span></span></div>
+    </div>
+
+    <div id="cap-posture" class="cap clip" data-start="24.3" data-duration="3.9" data-track-index="6">
+      <div class="ln"><span class="bx"><span class="w">둥근</span> <span class="w">어깨가</span> <span class="w">되면</span></span></div>
+      <div class="ln"><span class="bx"><span class="w">위</span> <span class="w">승모근</span> <span class="w">혼자</span> <span class="w">버텨요</span></span></div>
+    </div>
+
+    <div id="cap-fix" class="cap clip" data-start="28.5" data-duration="7.1" data-track-index="7">
+      <div class="ln" id="cap-fix-1"><span class="bx">턱 당기기 10초 × 10번</span></div>
+      <div class="ln" id="cap-fix-2"><span class="bx">화면은 눈높이로</span></div>
+    </div>
+    <div id="cap-note" class="cap clip" data-start="33.4" data-duration="2.2" data-track-index="8" style="top: 1210px">
+      <div class="ln"><span class="note">팔 저림이 함께 있으면 진료를 받아보세요</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const q = (sel) => Array.from(document.querySelectorAll(sel));
+      // scene-local times equal film times: this scene starts at 0
+      const exitAt = (sel, t) => tl.fromTo(q(sel + " .ln"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.2, ease: "power2.in", stagger: 0.04, immediateRender: false }, t);
+      const wordsBlur = (sel, ...times) => {
+        q(sel + " .ln").filter((ln) => ln.querySelector(".w")).forEach((ln, i) => {
+          const t0 = times[i] !== undefined ? times[i] : times[0] + i * 0.32;
+          tl.fromTo(ln.querySelector(".bx"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, t0);
+          tl.fromTo(ln.querySelectorAll(".w"), { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: 0.067 }, t0 + 0.03);
+        });
+      };
+      const wordsInk = (sel, ...times) => {
+        q(sel + " .ln").filter((ln) => ln.querySelector(".w")).forEach((ln, i) => {
+          const t0 = times[i] !== undefined ? times[i] : times[0] + i * 0.3;
+          tl.fromTo(ln.querySelector(".bx"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, t0);
+          ln.querySelectorAll(".w").forEach((w, j) => {
+            const ink = w.classList.contains("acc") ? "#e0262f" : "#111111";
+            tl.fromTo(w, { color: "#c4c4c4" }, { color: ink, duration: 0.16, ease: "power1.out" }, t0 + 0.05 + j * 0.09);
+          });
+        });
+      };
+      const lineBlur = (target, t) => tl.fromTo(target, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power3.out" }, t);
+
+      // every entrance lands on the word the narration says (word times from the voice alignment)
+      exitAt("#cap-hook", 4.3);
+
+      wordsInk("#cap-load", 4.75, 5.05);
+      lineBlur("#cap-load-num", 5.0);
+      [[6.2, 1], [6.6, 2], [7.0, 3], [7.45, 4]].forEach(([t, i]) => {
+        tl.fromTo("#cap-strip", { y: -(i - 1) * 180 }, { y: -i * 180, duration: 0.16, ease: "power2.out", immediateRender: false }, t);
+      });
+      lineBlur("#cap-load-src", 6.2);
+      exitAt("#cap-load", 9.35);
+      exitAt("#cap-src", 9.35);
+
+      wordsBlur("#cap-press", 10.45, 12.2);
+      exitAt("#cap-press", 14.65);
+
+      lineBlur(q("#cap-knot .ln")[0], 15.15);
+      lineBlur(q("#cap-knot .ln")[1], 16.6);
+      exitAt("#cap-knot", 19.0);
+
+      wordsInk("#cap-refer", 20.25, 21.02);
+      exitAt("#cap-refer", 23.75);
+
+      wordsBlur("#cap-posture", 24.3, 26.03);
+      exitAt("#cap-posture", 27.95);
+
+      lineBlur("#cap-fix-1", 28.5);
+      lineBlur("#cap-fix-2", 31.24);
+      lineBlur("#cap-note .ln", 33.4);
+
+      window.__timelines["lines"] = tl;
+    })();
+  </script>
+</template>

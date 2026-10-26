@@ -1,0 +1,144 @@
+<template>
+  <style>
+    @font-face { font-family: "KRSans"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"), local("NotoSansKR-ExtraBold"), local("Noto Sans KR ExtraBold"), local("Malgun Gothic Bold"), local("MalgunGothicBold"); }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #f3d9cf; }
+    #valve-wrap { position: absolute; inset: 0; }
+    #valve-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #valve-svg .lab .txt { font-family: "KRSans", sans-serif; font-weight: 800; fill: #111111; }
+    #valve-svg .lab .box { fill: #ffffff; }
+    #valve-svg .lab .lead { fill: none; stroke: #ffffff; stroke-width: 4; stroke-linecap: round; }
+    #valve-svg .lab .dot { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+  </style>
+  <div id="root" data-composition-id="valve" data-width="1080" data-height="1920">
+    <div id="valve-wrap">
+      <svg id="valve-svg" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+        <defs>
+          <linearGradient id="valve-wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9837d" /><stop offset="0.5" stop-color="#eba79e" /><stop offset="1" stop-color="#d9837d" /></linearGradient>
+          <clipPath id="valve-stomach-clip"><path id="valve-stomach-clip-path" /></clipPath>
+          <clipPath id="valve-eso-clip"><path id="valve-eso-clip-path" /></clipPath>
+        </defs>
+        <g id="valve-cam">
+          <g id="valve-body">
+            <!-- authored lying on the back: head to the left, oesophagus horizontal, stomach sagging below the junction -->
+            <rect id="valve-dia-top" x="492" y="-400" width="70" height="1210" rx="30" fill="#c4535b" />
+            <rect id="valve-dia-bot" x="492" y="990" width="70" height="1400" rx="30" fill="#c4535b" />
+            <path id="valve-stomach" fill="#e6a097" stroke="#c9736d" stroke-width="10" />
+            <g clip-path="url(#valve-stomach-clip)">
+              <path id="valve-rugae" fill="none" stroke="#cf7d75" stroke-width="7" stroke-linecap="round" opacity="0.7" />
+              <path id="valve-acid" fill="#c9dc4c" opacity="0.88" />
+            </g>
+            <rect x="-700" y="755" width="1290" height="290" rx="40" fill="url(#valve-wall)" />
+            <path id="valve-lumen" fill="#f7d6cf" />
+            <g clip-path="url(#valve-eso-clip)"><path id="valve-reflux" fill="#c9dc4c" opacity="0.92" /></g>
+            <path id="valve-les" fill="#b8323a" />
+          </g>
+        </g>
+        <g id="valve-lab-les" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">하부식도괄약근</text></g>
+        <g id="valve-lab-acid" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">위산</text></g>
+        <g id="valve-lab-eso" class="lab" opacity="0"><path class="lead" /><circle class="dot" r="8" /><rect class="box" rx="12" /><text class="txt" font-size="42">식도</text></g>
+      </svg>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // ---- CONFIG: scene-local seconds (0 = when this scene starts in the film) ----
+      const DURATION = 4.6;
+      const ANGLE = [[0, 0]];                                     // extra rotation in degrees; 0 = lying on the back, head to screen-left
+      const TONE = [[0, 1], [0.8, 1], [1.8, 0.15, "power1.inOut"]]; // sphincter squeeze: 1 shut, 0 slack
+      const RISE = [[0, 0], [1.9, 0], [3.9, 1, "power1.inOut"]];      // acid creeping up the oesophagus
+      const CAMS = [[0, 1.35], [0.6, 1, "expo.out"], [DURATION - 0.6, 1], [DURATION, 1.12, "power2.in"]];
+      const LABS = {
+        "valve-lab-eso": [[0, 0], [0.4, 0], [0.65, 1], [1.6, 1], [1.8, 0]],
+        "valve-lab-les": [[0, 0], [1.0, 0], [1.25, 1], [4.3, 1], [4.5, 0]],
+        "valve-lab-acid": [[0, 0], [2.2, 0], [2.45, 1], [4.3, 1], [4.5, 0]],
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const r1 = (v) => Math.round(v * 10) / 10;
+      const trk = (t, k) => AnatomyMotion.track(t, k);
+      const D2R = Math.PI / 180;
+      function smoothPath(pts, closed) {
+        const n = pts.length, g = (i) => (closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))]);
+        let d = "M" + r1(pts[0][0]) + "," + r1(pts[0][1]);
+        for (let i = 0; i < (closed ? n : n - 1); i++) {
+          const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+          d += "C" + r1(p1[0] + (p2[0] - p0[0]) / 6) + "," + r1(p1[1] + (p2[1] - p0[1]) / 6) + " " + r1(p2[0] - (p3[0] - p1[0]) / 6) + "," + r1(p2[1] - (p3[1] - p1[1]) / 6) + " " + r1(p2[0]) + "," + r1(p2[1]);
+        }
+        return d + (closed ? "Z" : "");
+      }
+      const STOMACH = [[560, 840], [700, 770], [900, 790], [1060, 930], [1090, 1170], [990, 1420], [760, 1490], [610, 1400], [560, 1200], [575, 1020], [560, 960]];
+      const labs = {};
+      function setupLabels() {
+        document.querySelectorAll("#valve-svg .lab").forEach((g) => {
+          const tx = g.querySelector(".txt"), fs = parseFloat(tx.getAttribute("font-size"));
+          let w = 0; try { w = tx.getComputedTextLength(); } catch (e) { w = 0; }
+          labs[g.id] = { g, tx, fs, w: w || tx.textContent.length * fs * 0.9, lead: g.querySelector(".lead"), dot: g.querySelector(".dot"), box: g.querySelector(".box") };
+        });
+      }
+      function placeLabel(id, ax, ay, dx, dy, side, op) {
+        const L = labs[id];
+        L.g.setAttribute("opacity", Math.round(op * 100) / 100);
+        if (op <= 0.001) return;
+        const hgt = L.fs * 1.5, bw = L.w + 40;
+        const bx = Math.max(60, Math.min(940 - bw, side > 0 ? ax + dx : ax + dx - bw)), by = Math.max(230, Math.min(1300 - hgt, ay + dy - hgt / 2));
+        L.box.setAttribute("x", r1(bx)); L.box.setAttribute("y", r1(by)); L.box.setAttribute("width", r1(bw)); L.box.setAttribute("height", r1(hgt));
+        L.tx.setAttribute("x", r1(bx + 20)); L.tx.setAttribute("y", r1(by + hgt / 2 + L.fs * 0.36));
+        L.lead.setAttribute("d", `M${r1(ax)},${r1(ay)} L${r1(Math.max(bx, Math.min(bx + bw, ax)))},${r1(by + hgt / 2)}`);
+        L.dot.setAttribute("cx", r1(ax)); L.dot.setAttribute("cy", r1(ay));
+      }
+
+      function drawAt(t) {
+        const ang = trk(t, ANGLE), tone = trk(t, TONE), rise = trk(t, RISE), cs = trk(t, CAMS);
+        const CX = 540, CY = 960;
+        $("valve-cam").setAttribute("transform", `translate(540,1060) scale(${cs.toFixed(4)}) translate(-540,-1000)`);
+        $("valve-body").setAttribute("transform", `rotate(${r1(ang)} ${CX} ${CY})`);
+        const st = smoothPath(STOMACH, true);
+        $("valve-stomach").setAttribute("d", st);
+        $("valve-stomach-clip-path").setAttribute("d", st);
+        let rug = "";
+        for (let i = 0; i < 5; i++) rug += smoothPath([[650 + i * 20, 1020 + i * 85], [800, 1000 + i * 90], [960, 1040 + i * 80]], false);
+        $("valve-rugae").setAttribute("d", rug);
+        // acid pools in the sagging stomach; its surface sits at the junction, so a slack sphincter lets it through
+        const level = 930 + 6 * Math.sin(t * 5.2);
+        let ac = `M300,${r1(level)}`;
+        for (let x = 300; x <= 1200; x += 30) ac += `L${x},${r1(level + 7 * Math.sin(x * 0.03 + t * 6))}`;
+        $("valve-acid").setAttribute("d", ac + "L1200,1700L300,1700Z");
+        // oesophagus lumen pinches to a slit where the sphincter squeezes
+        const half = (x) => { const k = Math.exp(-((x - 525) * (x - 525)) / (2 * 60 * 60)); return 92 - k * (92 - (6 + 64 * (1 - tone))); };
+        const top = [], bot = [];
+        for (let x = -700; x <= 600; x += 25) { top.push([x, 900 - half(x)]); bot.push([x, 900 + half(x)]); }
+        const lumen = "M" + top.concat(bot.reverse()).map((p) => r1(p[0]) + "," + r1(p[1])).join("L") + "Z";
+        $("valve-lumen").setAttribute("d", lumen);
+        $("valve-eso-clip-path").setAttribute("d", lumen);
+        // reflux: acid runs back along the floor of the oesophagus with a wavy front
+        const front = 600 - rise * 1250;
+        let rf = `M600,1000L${r1(front)},1000`;
+        for (let x = front; x <= 600; x += 20) rf += `L${r1(x)},${r1(918 + 10 * Math.sin(x * 0.04 + t * 8))}`;
+        $("valve-reflux").setAttribute("d", rise > 0.01 ? rf + "Z" : "M0,0");
+        const sq = 40 + 36 * tone;
+        $("valve-les").setAttribute("d", smoothPath([[480, 900 - 92 - sq], [505, 900 - half(525) - 4], [550, 900 - half(525) - 4], [575, 900 - 92 - sq]], true) + smoothPath([[480, 900 + 92 + sq], [505, 900 + half(525) + 4], [550, 900 + half(525) + 4], [575, 900 + 92 + sq]], true));
+        const toS = (x, y) => {
+          const a = (ang * Math.PI) / 180, dx = x - CX, dy = y - CY;
+          const sx = CX + dx * Math.cos(a) - dy * Math.sin(a), sy = CY + dx * Math.sin(a) + dy * Math.cos(a);
+          return [540 + (sx - 540) * cs, 1060 + (sy - 1000) * cs];
+        };
+        let p = toS(527, 900 - 92 - sq + 10); placeLabel("valve-lab-les", p[0], p[1], 40, -200, 1, trk(t, LABS["valve-lab-les"]));
+        p = toS(830, 1220); placeLabel("valve-lab-acid", p[0], p[1], 40, 160, 1, trk(t, LABS["valve-lab-acid"]));
+        p = toS(150, 860); placeLabel("valve-lab-eso", p[0], p[1], 20, -200, 1, trk(t, LABS["valve-lab-eso"]));
+      }
+
+      function build() {
+        setupLabels();
+        const proxy = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo(proxy, { t: 0 }, { t: DURATION, duration: DURATION, ease: "none", onUpdate: () => drawAt(proxy.t) }, 0);
+        tl.fromTo("#valve-wrap", { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0);
+        tl.fromTo("#valve-wrap", { filter: "blur(0px)" }, { filter: "blur(8px)", duration: 0.5, ease: "power2.in", immediateRender: false }, DURATION - 0.5);
+        drawAt(0);
+        window.__timelines["valve"] = tl;
+      }
+      const ready = document.fonts && document.fonts.load ? document.fonts.load('800 40px "KRSans"').catch(() => null) : Promise.resolve();
+      ready.then(build);
+    })();
+  </script>
+</template>

@@ -1,0 +1,38 @@
+{
+  "voice": "",
+  "model": "eleven_multilingual_v2",
+  "speed": 1.05,
+  "note": "start = film second the clip begins. After generating, run scripts/words.py and nudge the story/caption keys to the printed word times.",
+  "lines": [
+    {
+      "id": "r1",
+      "start": 0.1,
+      "text": "밥 먹고 바로 누우면, 몸속에선 이런 일이 생겨요."
+    },
+    {
+      "id": "r2",
+      "start": 4.3,
+      "text": "음식은 식도를 따라 위로 내려가고, 위는 위산으로 소화를 시작해요."
+    },
+    {
+      "id": "r3",
+      "start": 9.6,
+      "text": "그런데 바로 누우면 위와 식도가 같은 높이가 돼요."
+    },
+    {
+      "id": "r4",
+      "start": 13.7,
+      "text": "식도 아래 괄약근이 느슨하면, 위산이 거꾸로 올라와요."
+    },
+    {
+      "id": "r5",
+      "start": 18.3,
+      "text": "그래서 가슴이 타는 듯 쓰리고, 신물이 올라와요."
+    },
+    {
+      "id": "r6",
+      "start": 22.3,
+      "text": "식후 두세 시간은 눕지 말고, 잘 때는 머리 쪽을 높여 주세요."
+    }
+  ]
+}

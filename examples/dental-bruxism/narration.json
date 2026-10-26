@@ -1,0 +1,14 @@
+{
+  "voice": "",
+  "model": "eleven_multilingual_v2",
+  "speed": 1.05,
+  "note": "start = film second the clip begins. After generating, run scripts/words.py and nudge the story/caption keys to the printed word times.",
+  "lines": [
+    { "id": "d1", "start": 0.1, "text": "이를 꽉 무는 습관, 턱이 아픈 진짜 이유예요." },
+    { "id": "d2", "start": 4.2, "text": "씹는 근육인 교근과 측두근이 쉬지 못하고 계속 힘을 줘요." },
+    { "id": "d3", "start": 9.3, "text": "그러면 턱관절에 무리가 가서, 입을 벌릴 때 아프고 관자놀이까지 아파요." },
+    { "id": "d4", "start": 14.3, "text": "이를 갈면 치아 표면도 닳아서 시릴 수 있어요." },
+    { "id": "d5", "start": 18.8, "text": "평소엔 입술은 다물고, 윗니와 아랫니는 살짝 떼 두세요." },
+    { "id": "d6", "start": 23.4, "text": "밤에 이를 간다면, 치과에서 보호장치를 상담해 보세요." }
+  ]
+}

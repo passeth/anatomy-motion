@@ -1,0 +1,13 @@
+# never commit generated media, keys or local renders
+*.mp3
+*.wav
+*.mp4
+renders/
+.hyperframes/
+node_modules/
+.DS_Store
+*.key
+.env
+narration.timing.json
+__pycache__/
+*.pyc
